@@ -19,7 +19,8 @@ livem_data = [0, 32, 41, 2, 13, 14, 0]
 progm = mido.Message('sysex', data=progm_data)
 port.send(progm)
 
-tempo = mido.MetaMessage('set_tempo', tempo=240)
+tempo = mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(10))
+#port.send(tempo)
 
 MIN = 11
 MAX = 99
@@ -43,10 +44,12 @@ def off_all():
 def render_frame(frame):
     for x in range(0, len(frame.grid)):
         for y in range(0, len(frame.grid[0])):
-            port.send(mido.Message('note_on', note=grid_to_midi(
+            port.send(mido.Message('note_on', channel=frame.get_channel_value((x, y)), note=grid_to_midi(
                 x, y), velocity=frame.get_value((x, y))))
 
-picks = {"snake":0.4,"clock":0.35,"pong": 0.05, "scroller":0.2}
+
+#picks = {"snake": 0.4, "clock": 0.35, "pong": 0.05, "scroller": 0.2}
+picks = {"rbreathe": 0.3, "snake": 0.3, "clock": 0.2, "scroller": 0.2}
 while True:
     s = 0
     k = 0
@@ -68,12 +71,16 @@ while True:
         view = LinearSnake()
     elif pick == "clock":
         view = Clock()
+    elif pick == "rbreathe":
+        view = RadialBreathe()
 
     if pick != "clock":
         view.compile()
-
+        print(len(view.frames))
         for frame in view.frames:
             render_frame(frame)
+            msg2 = mido.Message("clock")
+            port.send(msg2)
             time.sleep(1/view.framespeed)
     else:
         render_frame(view.get_frame())

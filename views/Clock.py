@@ -9,10 +9,11 @@ import math
 class Clock(View):
     def __init__(self):
         self.color = 3
-        self.good_points = [0, 0.125, 0.25,0.375, 0.5, 0.625, 0.75, 0.875,0.9]
+        self.good_points = [0, 0.125, 0.25,
+                            0.375, 0.5, 0.625, 0.75, 0.875, 0.9]
 
     def nearest_neighbor(self, val, array):
-        best = 1000000 # change this?
+        best = 1000000  # change this?
         neighb = array[0]
         for _val in array:
             diff = abs(val-_val)
@@ -28,7 +29,7 @@ class Clock(View):
         angEps = 0.5
         angFactor = 0.5  # higher the number the lower epsilon at the edges
         softEps = 0.3
-        bord = random.randint(3,127)
+        bord = random.randint(3, 127)
         for x in range(0, 9):
             for y in range(0, 9):
                 # outer rim
@@ -45,9 +46,12 @@ class Clock(View):
                 #min = 30
                 sec = now.second
                 #print(str(hr) + " " + str(min) + " "+str(sec))
-                hrAng = 2 * math.pi * self.nearest_neighbor(hr / 12, self.good_points)
-                minAng = 2 * math.pi * self.nearest_neighbor(min / 60, self.good_points)
-                secAng = 2 * math.pi * self.nearest_neighbor(sec / 60, self.good_points)
+                hrAng = 2 * math.pi * \
+                    self.nearest_neighbor(hr / 12, self.good_points)
+                minAng = 2 * math.pi * \
+                    self.nearest_neighbor(min / 60, self.good_points)
+                secAng = 2 * math.pi * \
+                    self.nearest_neighbor(sec / 60, self.good_points)
                 #print(str(hrAng) + " "+str(minAng) + " "+str(secAng))
                 # center at (4,4)
                 ang = (-math.atan2(y-4, x-4)
@@ -61,13 +65,13 @@ class Clock(View):
 
                 if abs(minAng - ang) < angEps/math.pow((0.1+x-4)**2+(y-4)**2, angFactor):
                     if abs(minAng - ang) > softEps:
-                        frame.set_value((x,y), 2)
+                        frame.set_value((x, y), 1)
                     else:
                         frame.set_value((x, y), 3)
 
                 if abs(hrAng - ang) < angEps/math.pow((0.1+x-4)**2+(y-4)**2, angFactor) and (x-4)**2+(y-4)**2 < 6:
                     if abs(hrAng - ang) > softEps:
-                        frame.set_value((x,y), 2)
+                        frame.set_value((x, y), 1)
                     else:
                         frame.set_value((x, y), 3)
 

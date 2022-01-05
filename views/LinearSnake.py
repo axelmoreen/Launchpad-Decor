@@ -11,7 +11,7 @@ class LinearSnake(View):
         self.add_color_mode = bool(random.choice([True, False]))
         if (self.add_color_mode):
             self.color_speed = 15
-
+        self.breathe = bool(random.choice([True, False]))
         self.color = random.randint(1, 128)
 
     def compile(self):
@@ -76,5 +76,7 @@ class LinearSnake(View):
             frame = last_frame.copy()
 
             frame.set_value(tuple(pos), self.color)
+            if self.breathe:
+                frame.set_channel_value(tuple(pos), 2)
             self.frames.append(frame)
             last_frame = frame

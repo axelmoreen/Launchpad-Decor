@@ -3,8 +3,15 @@ import copy
 
 
 class Frame:
-    def __init__(self, grid=[[0 for x in range(9)] for y in range(9)]):
+    def __init__(self, grid=[[0 for x in range(9)] for y in range(9)], channel_grid=[[0 for x in range(9)] for y in range(9)]):
         self.grid = grid
+        self.channel_grid = channel_grid
+
+    def set_channel_value(self, tup, channel):
+        self.channel_grid[tup[0]][tup[1]] = channel
+
+    def get_channel_value(self, tup):
+        return self.channel_grid[tup[0]][tup[1]]
 
     def set_value(self, tup, color):
         self.grid[tup[0]][tup[1]] = color
