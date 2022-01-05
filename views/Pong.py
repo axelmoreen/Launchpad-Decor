@@ -11,9 +11,9 @@ class Pong(View):
         # Bricks are 8x8 large.
         self.frames = []
         self.xstart = random.randint(0, 65)
-        self.v = 3.5
-        self.startang = random.random() * math.pi
-        self.bricks = [(x, y, random.randint(1, 128))
+        self.v = 4
+        self.startang = (math.pi * 3) + (math.pi/6 *(0.5-random.random()))
+        self.bricks = [(x, y, random.randint(1, 127))
                        for y in range(4, 8) for x in range(0, 8)]
 
         self.x = self.xstart

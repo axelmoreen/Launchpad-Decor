@@ -28,12 +28,13 @@ class Clock(View):
         angEps = 0.5
         angFactor = 0.5  # higher the number the lower epsilon at the edges
         softEps = 0.3
+        bord = random.randint(3,127)
         for x in range(0, 9):
             for y in range(0, 9):
                 # outer rim
                 if (x-4)**2 + (y-4)**2 > 16 - eps:
                     if (x-4)**2 + (y-4)**2 < 16 + eps:
-                        frame.set_value((x, y), 33)
+                        frame.set_value((x, y), bord)
                     continue
 
                 # hour hand
@@ -68,8 +69,8 @@ class Clock(View):
                     if abs(hrAng - ang) > softEps:
                         frame.set_value((x,y), 2)
                     else:
-                        frame.set_value((x, y), 13)
+                        frame.set_value((x, y), 3)
 
-                frame.set_value((4, 4), 13)
+                frame.set_value((4, 4), 3)
 
         return frame.copy()

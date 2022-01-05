@@ -46,7 +46,7 @@ def render_frame(frame):
             port.send(mido.Message('note_on', note=grid_to_midi(
                 x, y), velocity=frame.get_value((x, y))))
 
-picks = {"pong": 0.4, "scroller":0.4, "clock":0.1, "snake":0.1}
+picks = {"snake":0.4,"clock":0.35,"pong": 0.05, "scroller":0.2}
 while True:
     s = 0
     k = 0

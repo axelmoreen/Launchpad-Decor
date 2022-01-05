@@ -12,6 +12,8 @@ class SpaceScroller(View):
         self.collided = False
         self.length = 0
         self.color = random.randint(4,63)
+        self.ast_color = random.randint(2,127)
+        self.laser_color = random.randint(3,127)
         self.objspeed = -1.5
 
         self.framespeed = 100
@@ -33,12 +35,12 @@ class SpaceScroller(View):
 
         if self.laserdrawer > 0:
             for i in range(2,9):
-                frame.set_value((i, yapprox), 62)
+                frame.set_value((i, yapprox), self.laser_color)
         # draw asteroids
         for ob in self.obs:
             xap = int(ob[0]/8)
             yap = int(ob[1]/8)
-            frame.set_value((self._clamp(xap,0,8),self._clamp(yap,0,8)), 2)
+            frame.set_value((self._clamp(xap,0,8),self._clamp(yap,0,8)), self.ast_color)
 
 
         return frame.copy()
@@ -63,14 +65,14 @@ class SpaceScroller(View):
 
         for ob in cop:
             x = ob[0]+ self.objspeed * self.dt
-            if abs(ob[1] - self.y) < 12 and self.lasercounter > 80:
+            if abs(ob[1] - self.y) < 10 and self.lasercounter > 80:
                 self.lasercounter = 0
                 self.laserdrawer = 15
                 self.lasery = self.y
             if abs(self.lasery - ob[1]) < 12 and self.laserdrawer > 0:
                 continue
-            if x < 16:
-                if abs(ob[1] - self.y) < 24:
+            if x < 12:
+                if abs(ob[1] - self.y) < 20:
                     self.collided = True
                     return
                 if x < 0:
