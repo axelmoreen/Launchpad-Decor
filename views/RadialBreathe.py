@@ -19,7 +19,8 @@ class RadialBreathe(View):
     def compile(self):
         for i in range(0, self.iters):
             self.color_offset = 0.25*random.random()+0.25
-            frame = Frame(grid=[[0 for x in range(9)] for y in range(9)], channel_grid=[[0 for x in range(9)] for y in range(9)])
+            frame = Frame(grid=[[0 for x in range(9)] for y in range(9)], channel_grid=[
+                          [0 for x in range(9)] for y in range(9)])
             while self.size < 8:
                 for x in range(0, 9):
                     for y in range(0, 9):

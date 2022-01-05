@@ -49,7 +49,9 @@ def render_frame(frame):
 
 
 #picks = {"snake": 0.4, "clock": 0.35, "pong": 0.05, "scroller": 0.2}
-picks = {"rbreathe": 0.3, "snake": 0.3, "clock": 0.2, "scroller": 0.2}
+picks = {"rbreathe": 0.2, "rain": 0.2,
+         "snake": 0.2, "clock": 0.2, "scroller": 0.2}
+#picks = {"rain": 1}
 while True:
     s = 0
     k = 0
@@ -73,10 +75,11 @@ while True:
         view = Clock()
     elif pick == "rbreathe":
         view = RadialBreathe()
+    elif pick == "rain":
+        view = Rain()
 
     if pick != "clock":
         view.compile()
-        print(len(view.frames))
         for frame in view.frames:
             render_frame(frame)
             msg2 = mido.Message("clock")
