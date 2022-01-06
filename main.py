@@ -48,9 +48,9 @@ def render_frame(frame):
                 x, y), velocity=frame.get_value((x, y))))
 
 
-#picks = {"snake": 0.4, "clock": 0.35, "pong": 0.05, "scroller": 0.2}
+picks = {"snake": 0.4, "clock": 0.35, "pong": 0.05, "scroller": 0.2}
 picks = {"rbreathe": 0.2, "rain": 0.2,
-         "snake": 0.2, "clock": 0.2, "scroller": 0.2}
+         "snake": 0.2, "checkers": 0.2, "scroller": 0.2}
 #picks = {"rain": 1}
 while True:
     s = 0
@@ -77,6 +77,8 @@ while True:
         view = RadialBreathe()
     elif pick == "rain":
         view = Rain()
+    elif pick == "checkers":
+        view = Checkers()
 
     if pick != "clock":
         view.compile()

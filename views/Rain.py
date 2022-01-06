@@ -39,9 +39,9 @@ class Rain(View):
                 frame.set_value((x, y), self.color)
 
         if self.water_level < 8:
-            dec = int(10*self.water_level-int(self.water_level))
+            dec = int(10*(self.water_level-int(self.water_level)))
             for x in range(0, 9):
-                if 10*random.random() < dec and dec > 5:
+                if 10*random.random() < dec and dec > 4:
                     frame.set_value((x, int(self.water_level)), self.color)
 
         for drop in self.droplets:
