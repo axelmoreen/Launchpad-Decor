@@ -6,3 +6,4 @@ from .SpaceScroller import *
 from .RadialBreathe import *
 from .Rain import *
 from .Checkers import *
+from .Asteroids import *

@@ -94,4 +94,3 @@ class Checkers:
                 self.move = "r"
             else:
                 self.move = "w"
-        print(self.get_moves("w"))
