@@ -52,8 +52,6 @@ class Checkers:
                                     for i in range(0, self.jump_priority):
                                         moves.append(((x, y), (x+2, y+2*dir)))
 
-                    # todo do jumping
-
         return moves
 
     def render_frame(self):
