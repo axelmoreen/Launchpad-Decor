@@ -7,6 +7,8 @@ from util import *
 import threading
 import subprocess
 
+import tkinter as tk
+
 print(mido.get_output_names())
 names = mido.get_output_names()
 match = [s for s in names if "MIDIOUT2 (LPMiniMK3 MIDI)" in s]
@@ -123,9 +125,12 @@ disp = threading.Thread(target=run_display, daemon=True)
 disp.start()
 
 
-while True:
-    if not running:
-        time.sleep(10)
+root = tk.Tk()
+
+
+def do_process_check():
+    global running
+    global root
 
     output = subprocess.check_output(('TASKLIST', '/FO', 'CSV')).decode()
     # get rid of extra " and split into lines
@@ -143,8 +148,42 @@ while True:
                 running = False
             found = True
             break
+
     if not found:
         running = True
         progm = mido.Message('sysex', data=progm_data)
         port.send(progm)
-    time.sleep(3)
+
+    root.after(3000 if running else 10000, task)
+
+
+def on_close():
+    running = False
+    time.sleep(0.5)
+    # send empty Frame
+    render_frame(Frame())
+    livem = mido.Message('sysex', data=livem_data)
+    port.send(livem)
+    root.destroy()
+
+
+def menu_event(event, x, y):
+    global trayMenu
+    if event == 'WM_RBUTTONDOWN':
+        trayMenu.tk_popup(x, y)
+
+
+root.protocol("WM_DELETE_WINDOW", on_close)
+
+# create system tray icon
+root.tk.call('package', 'require', 'Winico')
+icon = root.tk.call('winico', 'createfrom', 'smiley.ico')
+root.tk.call('winico', 'taskbar', 'add', icon,
+             '-callback', (root.register(menu_event), '%m', '%x', '%y'),
+             '-pos', 0,
+             '-text', u'Launchpad Decor')
+
+trayMenu = tk.Menu(tearoff=False)
+trayMenu.add_command(label="Quit", command=on_close)
+root.withdraw()
+root.mainloop()
