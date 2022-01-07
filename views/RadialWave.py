@@ -1,12 +1,12 @@
 from . import *
 
 
-class RadialBreathe(View):
+class RadialWave(View):
     def __init__(self):
         self.frames = []
         self.size = 0
         self.iters = 3
-        self.speed = 2
+        self.speed = 1.2
         self.dt = 0.1
         self.framespeed = 30
         self.color_period = 0.1

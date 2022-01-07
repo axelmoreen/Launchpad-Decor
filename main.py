@@ -27,10 +27,15 @@ port = mido.open_output(port_name)
 progm_data = [0, 32, 41, 2, 13, 14, 1]
 livem_data = [0, 32, 41, 2, 13, 14, 0]
 
-progm = mido.Message('sysex', data=progm_data)
-port.send(progm)
+brightness_norm = [0, 32, 41, 2, 13, 8, 80]
+brightness_idle = [0, 32, 41, 2, 13, 8, 40]
+brightness_audial = [0, 32, 41, 2, 13, 8, 15]
 
-tempo = mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(10))
+progm = mido.Message('sysex', data=progm_data)
+br = mido.Message('sysex', data=brightness_idle)
+port.send(progm)
+port.send(br)
+#tempo = mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(10))
 #port.send(tempo)
 
 MIN = 11
@@ -81,8 +86,9 @@ def run_display():
         sound = 0
         idle = True
 
-        audio_picks = {"visualizer": 1}
-        idle_picks = {"rbreathe": 0.2, "rain": 0.2,
+        #audio_picks = {"impactvisualizer": 0.5, "barsvisualizer": 0.5}
+        audio_picks = {"impactvisualizer": 1}
+        idle_picks = {"radialwave": 0.2, "rain": 0.2,
                       "snake": 0.2, "checkers": 0.2, "scroller": 0.2}
         while True:
             last_time = timer()
@@ -113,16 +119,18 @@ def run_display():
                     view = LinearSnake()
                 elif pick == "clock":
                     view = Clock()
-                elif pick == "rbreathe":
-                    view = RadialBreathe()
+                elif pick == "radialwave":
+                    view = RadialWave()
                 elif pick == "rain":
                     view = Rain()
                 elif pick == "checkers":
                     view = Checkers()
                 elif pick == "asteroids":
                     view = Asteroids()
-                elif pick == "visualizer":
-                    view = Visualizer()
+                elif pick == "barsvisualizer":
+                    view = BarsVisualizer()
+                elif pick == "impactvisualizer":
+                    view = ImpactVisualizer()
 
                 if not isinstance(view, AudioView):
                     view.compile()
@@ -146,6 +154,9 @@ def run_display():
                                 idle = False
                                 sound = 0
                                 no_sound = 0
+                                port.send(mido.Message(
+                                    'sysex', data=brightness_audial))
+                                break
                         time.sleep(
                             max((1/view.framespeed) - timer()+last_time, 0))
 
@@ -164,6 +175,8 @@ def run_display():
                             amp = np.sum(np.abs(block)/2)
                             if amp == 0:
                                 no_sound += 1
+                            msg2 = mido.Message("clock")
+                            port.send(msg2)
                             render_frame(view.get_frame(amp, four))
                         else:
                             no_sound += 1
@@ -172,6 +185,8 @@ def run_display():
                             idle = True
                             sound = 0
                             no_sound = 0
+                            port.send(mido.Message(
+                                'sysex', data=brightness_idle))
                             break
                         time.sleep(
                             max((1/view.framespeed) - timer()+last_time, 0))
@@ -219,7 +234,9 @@ def on_close():
     # send empty Frame
     render_frame(Frame())
     livem = mido.Message('sysex', data=livem_data)
+    bright = mido.Message('sysex', data=brightness_norm)
     port.send(livem)
+    port.send(bright)
     root.destroy()
 
 
@@ -242,5 +259,4 @@ root.tk.call('winico', 'taskbar', 'add', icon,
 trayMenu = tk.Menu(tearoff=False)
 trayMenu.add_command(label="Quit", command=on_close)
 root.withdraw()
-root.mainloop()
 root.mainloop()

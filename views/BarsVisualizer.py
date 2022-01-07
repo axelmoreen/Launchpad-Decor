@@ -6,12 +6,11 @@ import numpy as np
 import math
 
 
-class Visualizer(AudioView):
+class BarsVisualizer(AudioView):
     def __init__(self):
         self.framespeed = 128
-        self.view_length = 2000
-        self.sr = 44100
-        self.block_size = 1024
+        self.view_length = 1280
+
         tmp = random.randint(3, 127)
         tmp2 = random.randint(4, 52)
         self.colors = random.choice([[72, 5, 60, 84, 96, 124, 13, 17, 87],
