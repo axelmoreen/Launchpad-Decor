@@ -6,8 +6,9 @@ from views import *
 from util import *
 import threading
 import subprocess
-
+from timeit import default_timer as timer
 import tkinter as tk
+import numpy as np
 
 print(mido.get_output_names())
 names = mido.get_output_names()
@@ -62,63 +63,118 @@ def render_frame(frame):
                 x, y), velocity=frame.get_value((x, y))))
 
 
-picks = {"rbreathe": 0.2, "rain": 0.2,
-         "snake": 0.2, "checkers": 0.2, "scroller": 0.2}
-#picks = {"asteroids": 1}
+# audio-related visuals
+mic = sc.get_microphone(
+    sc.default_speaker().name, include_loopback=True)
+sr = 44100
+if not mic:
+    print("Visualizer could not load loopback")
 
-
-def run_view(view):
-    global port
-    view.compile()
-    for frame in view.frames:
-        if not running:
-            break
-        render_frame(frame)
-        msg2 = mido.Message("clock")
-        port.send(msg2)
-        time.sleep(1/view.framespeed)
+#picks = {"rbreathe": 0.2, "rain": 0.2,
+#         "snake": 0.2, "checkers": 0.2, "scroller": 0.2}
 
 
 def run_display():
-    while True:
-        if not running:
-            time.sleep(10)
-        else:
-            s = 0
-            k = 0
-            t = random.random()
-            it = list(picks.items())
-            pick = None
-            while k < len(it):
-                s += it[k][1]
-                if (s > t):
-                    pick = it[k][0]
-                    break
-                k += 1
-            view = None
-            if pick == "pong":
-                view = Pong()
-            elif pick == "scroller":
-                view = SpaceScroller()
-            elif pick == "snake":
-                view = LinearSnake()
-            elif pick == "clock":
-                view = Clock()
-            elif pick == "rbreathe":
-                view = RadialBreathe()
-            elif pick == "rain":
-                view = Rain()
-            elif pick == "checkers":
-                view = Checkers()
-            elif pick == "asteroids":
-                view = Asteroids()
+    global mic, sr
+    with mic.recorder(samplerate=sr) as recorder:
+        no_sound = 0
+        sound = 0
+        idle = True
 
-            if pick != "clock":
-                run_view(view)
+        audio_picks = {"visualizer": 1}
+        idle_picks = {"rbreathe": 0.2, "rain": 0.2,
+                      "snake": 0.2, "checkers": 0.2, "scroller": 0.2}
+        while True:
+            last_time = timer()
 
+            if not running:
+                time.sleep(10)
             else:
-                render_frame(view.get_frame())
-                time.sleep(5)
+                s = 0
+                k = 0
+                t = random.random()
+                if idle:
+                    it = list(idle_picks.items())
+                else:
+                    it = list(audio_picks.items())
+                pick = None
+                while k < len(it):
+                    s += it[k][1]
+                    if (s > t):
+                        pick = it[k][0]
+                        break
+                    k += 1
+                view = None
+                if pick == "pong":
+                    view = Pong()
+                elif pick == "scroller":
+                    view = SpaceScroller()
+                elif pick == "snake":
+                    view = LinearSnake()
+                elif pick == "clock":
+                    view = Clock()
+                elif pick == "rbreathe":
+                    view = RadialBreathe()
+                elif pick == "rain":
+                    view = Rain()
+                elif pick == "checkers":
+                    view = Checkers()
+                elif pick == "asteroids":
+                    view = Asteroids()
+                elif pick == "visualizer":
+                    view = Visualizer()
+
+                if not isinstance(view, AudioView):
+                    view.compile()
+                    k = 0
+                    for frame in view.frames:
+                        if not running:
+                            break
+                        last_time = timer()
+                        render_frame(frame)
+                        msg2 = mido.Message("clock")
+                        port.send(msg2)
+                        k += 1
+                        if k % int(view.framespeed/3) == 0:
+                            block = recorder.record(numframes=256)
+                            amp = np.sum(np.abs(block)/2)
+                            if amp > 1:
+                                sound += 1
+                            else:
+                                sound -= 1
+                            if sound > 5:
+                                idle = False
+                                sound = 0
+                                no_sound = 0
+                        time.sleep(
+                            max((1/view.framespeed) - timer()+last_time, 0))
+
+                else:
+                    for i in range(0, view.view_length):
+                        last_time = timer()
+                        block = recorder.record(numframes=256)
+                        #len_block = len(block)
+                        if block.size > 0:
+                            #_bl = np.zeros(
+                            #    (2**(int(np.ceil(np.log2(len_block)))), 2))
+                            #_bl[0:len_block] = block
+                            #print(len(_bl))
+                            #four = fft(_bl)]
+                            four = fft(block)
+                            amp = np.sum(np.abs(block)/2)
+                            if amp == 0:
+                                no_sound += 1
+                            render_frame(view.get_frame(amp, four))
+                        else:
+                            no_sound += 1
+
+                        if no_sound > 5 * view.framespeed:  # 5 seconds
+                            idle = True
+                            sound = 0
+                            no_sound = 0
+                            break
+                        time.sleep(
+                            max((1/view.framespeed) - timer()+last_time, 0))
 
 
 disp = threading.Thread(target=run_display, daemon=True)
@@ -186,4 +242,5 @@ root.tk.call('winico', 'taskbar', 'add', icon,
 trayMenu = tk.Menu(tearoff=False)
 trayMenu.add_command(label="Quit", command=on_close)
 root.withdraw()
+root.mainloop()
 root.mainloop()

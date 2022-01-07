@@ -44,3 +44,8 @@ class View:
 
     def compile(self):
         pass
+
+
+class AudioView:
+    def get_frame(self, amp, transform):
+        pass
