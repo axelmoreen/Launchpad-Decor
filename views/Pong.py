@@ -12,7 +12,7 @@ class Pong(View):
         self.frames = []
         self.xstart = random.randint(0, 65)
         self.v = 4
-        self.startang = (math.pi * 3) + (math.pi/6 *(0.5-random.random()))
+        self.startang = (math.pi * 3) + (math.pi/6 * (0.5-random.random()))
         self.bricks = [(x, y, random.randint(1, 127))
                        for y in range(4, 8) for x in range(0, 8)]
 
@@ -22,6 +22,18 @@ class Pong(View):
         self.vy = self.v * math.sin(self.startang)
         self.dt = 0.2
         self.framespeed = 500
+
+    def expected_length(self):
+        return 30
+
+    def description(self):
+        return "Plays pong"
+
+    def settings(self):
+        return {}
+
+    def is_experimental(self):
+        return True
 
     def _clamp(self, value, _min, _max):
         return min(max(_min, value), _max)

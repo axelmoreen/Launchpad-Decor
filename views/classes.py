@@ -36,6 +36,15 @@ class View:
         self.frames = []
         self.framespeed = 60
 
+    def description(self):
+        return "Description"
+
+    def settings(self):
+        return {}
+
+    def is_experimental(self):
+        return False
+
     def get_frame_length(self):
         return 0
 

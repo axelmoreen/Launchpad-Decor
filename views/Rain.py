@@ -16,6 +16,15 @@ class Rain(View):
         self.speed = 3
         self.dt = 0.1
 
+    def description(self):
+        return "It's raining colors"
+
+    def settings(self):
+        return {}
+
+    def expected_length(self):
+        return 15
+
     def _apply_physics(self):
         if random.random() < self.droplet_chance:
             self.droplets.append((random.randint(0, 8), 8.99))

@@ -21,6 +21,15 @@ class Checkers:
                       ["w", "i", "w", "i", "e", "i", "r", "i", "r"]]
         self.jump_priority = 4  # higher than the more likely to take a jump if it is there
 
+    def expected_length(self):
+        return 20
+
+    def settings(self):
+        return {}
+
+    def description(self):
+        return "Launchpad plays checkers!"
+
     def get_moves(self, color):
         moves = []
         for x in range(0, 9):

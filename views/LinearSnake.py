@@ -14,6 +14,15 @@ class LinearSnake(View):
         self.breathe = bool(random.choice([True, False]))
         self.color = random.randint(1, 128)
 
+    def description(self):
+        return "Simple snake pattern"
+
+    def settings(self):
+        return {}
+
+    def expected_length(self):
+        return 2
+
     def compile(self):
         last_frame = EmptyFrame()
         self.frames.append(last_frame)

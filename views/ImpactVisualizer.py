@@ -25,6 +25,15 @@ class ImpactVisualizer(AudioView):
         self.avg_length = 32
         self.impact = 0
 
+    def description(self):
+        return "Audio visualizer showing the loud parts"
+
+    def settings(self):
+        return {}
+
+    def expected_length(self):
+        return 10
+
     def ins_get_avg(self, amp):
         if len(self.amps) >= self.avg_length:
             self.amps.pop(0)
@@ -32,12 +41,12 @@ class ImpactVisualizer(AudioView):
         return sum(self.amps) / len(self.amps)
 
     def get_frame(self, _amp, four):
-        amp = np.sum(np.abs(four[-2:-1]))
+        amp = np.sum(np.abs(four[-4:-1]))
         #print(amp)
         frame = Frame(grid=[[0 for y in range(0, 9)]
                             for x in range(0, 9)], channel_grid=self.static_matrix)
         avg = self.ins_get_avg(amp)
-        radius = 1.5 * amp / avg
+        radius = 1.5 * amp / avg if avg > 0 else 0
         for x in range(0, 9):
             for y in range(0, 9):
                 r_p = (x-4)**2 + (y-4)**2

@@ -13,6 +13,12 @@ class Clock(View):
                             0.375, 0.5, 0.625, 0.75, 0.875, 0.9]
         self.framespeed = 1
 
+    def description(self):
+        return "Clock display"
+
+    def settings(self):
+        return {}
+
     def nearest_neighbor(self, val, array):
         best = 1000000  # change this?
         neighb = array[0]
@@ -23,6 +29,12 @@ class Clock(View):
                 best = diff
 
         return neighb
+
+    def expected_length(self):
+        return 5
+
+    def is_experimental(self):
+        return True
 
     def get_frame(self):
         frame = Frame(grid=[[0 for x in range(9)] for y in range(9)])

@@ -2,6 +2,7 @@ from . import *
 import time
 import random
 
+
 class SpaceScroller(View):
     def __init__(self):
         self.y = 32
@@ -11,9 +12,9 @@ class SpaceScroller(View):
         self.dt = 0.1
         self.collided = False
         self.length = 0
-        self.color = random.randint(4,63)
-        self.ast_color = random.randint(2,127)
-        self.laser_color = random.randint(3,127)
+        self.color = random.randint(4, 63)
+        self.ast_color = random.randint(2, 127)
+        self.laser_color = random.randint(3, 127)
         self.objspeed = -1.5
 
         self.framespeed = 100
@@ -21,31 +22,38 @@ class SpaceScroller(View):
         self.lasercounter = 0
         self.laserdrawer = 0
 
+    def description(self):
+        return "Shoot 'em up"
+
+    def settings(self):
+        return {}
+
+    def expected_length(self):
+        return 15
+
     def _clamp(self, value, _min, _max):
         return min(max(_min, value), _max)
 
     def render_frame(self):
         frame = Frame(grid=[[0 for x in range(9)] for y in range(9)])
         # draw spaceship
-        yapprox = self._clamp(int(self.y / 8),0,7)
-        frame.set_value((0,self._clamp(yapprox+1,0,8)), self.color)
-        frame.set_value((0,yapprox), self.color)
-        frame.set_value((1,yapprox), self.color)
-        frame.set_value((0,self._clamp(yapprox-1,0,8)), self.color)
+        yapprox = self._clamp(int(self.y / 8), 0, 7)
+        frame.set_value((0, self._clamp(yapprox+1, 0, 8)), self.color)
+        frame.set_value((0, yapprox), self.color)
+        frame.set_value((1, yapprox), self.color)
+        frame.set_value((0, self._clamp(yapprox-1, 0, 8)), self.color)
 
         if self.laserdrawer > 0:
-            for i in range(2,9):
+            for i in range(2, 9):
                 frame.set_value((i, yapprox), self.laser_color)
         # draw asteroids
         for ob in self.obs:
             xap = int(ob[0]/8)
             yap = int(ob[1]/8)
-            frame.set_value((self._clamp(xap,0,8),self._clamp(yap,0,8)), self.ast_color)
-
+            frame.set_value(
+                (self._clamp(xap, 0, 8), self._clamp(yap, 0, 8)), self.ast_color)
 
         return frame.copy()
-
-
 
     def apply_physics(self):
         # every frame self.length chance to spawn asteroid
@@ -64,7 +72,7 @@ class SpaceScroller(View):
         self.laserdrawer -= 1
 
         for ob in cop:
-            x = ob[0]+ self.objspeed * self.dt
+            x = ob[0] + self.objspeed * self.dt
             if abs(ob[1] - self.y) < 10 and self.lasercounter > 80:
                 self.lasercounter = 0
                 self.laserdrawer = 15
@@ -77,7 +85,7 @@ class SpaceScroller(View):
                     return
                 if x < 0:
                     continue
-            self.obs.append((x,ob[1]))
+            self.obs.append((x, ob[1]))
 
         self.length += 0.0001
         self.vy += 0.1 * (random.random()-0.5)

@@ -2,9 +2,10 @@ from . import *
 
 
 class Asteroids(View):
+    framespeed = 60
+
     def __init__(self):
         self.frames = []
-        self.framespeed = 60
         self.length = 10 * self.framespeed
         self.grav = 1
 
@@ -16,6 +17,18 @@ class Asteroids(View):
         self.dt = 0.1
         self.earth_size = 20
         self.tick = 0
+
+    def description(self):
+        return "(not working)"
+
+    def settings(self):
+        return {}
+
+    def is_experimental(self):
+        return True
+
+    def expected_length(self):
+        return 10
 
     def _apply_physics(self):
         if random.random() < self.spawn_chance:
@@ -91,4 +104,5 @@ class Asteroids(View):
     def compile(self):
         for i in range(0, self.length):
             self._apply_physics()
+            self.frames.append(self.render_frame())
             self.frames.append(self.render_frame())

@@ -13,6 +13,15 @@ class RadialWave(View):
         self.color_offset = 0.2
         self.bh_size = 0
 
+    def expected_length(self):
+        return 10
+
+    def description(self):
+        return "Colorful radial wave"
+
+    def settings(self):
+        return {}
+
     def _clamp(self, value, _min, _max):
         return min(max(_min, value), _max)
 
