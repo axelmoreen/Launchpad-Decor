@@ -12,7 +12,8 @@ class Pong(View):
         self.frames = []
         self.xstart = random.randint(0, 65)
         self.v = 4
-        self.startang = (math.pi * 3) + (math.pi/6 * (0.5-random.random()))
+        #self.startang = (math.pi * 1.5) + (math.pi/6 * (0.5-random.random()))
+        self.startang = (math.pi * 1.5) + (math.pi/6)
         self.bricks = [(x, y, random.randint(1, 127))
                        for y in range(4, 8) for x in range(0, 8)]
 

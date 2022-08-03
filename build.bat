@@ -1,1 +1,0 @@
-pyinstaller main.py --hidden-import python-rtmidi --noconfirm --add-data="tcl/*;." -w --name="Launchpad Decor"

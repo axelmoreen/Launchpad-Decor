@@ -37,9 +37,9 @@ port = mido.open_output(port_name)
 progm_data = [0, 32, 41, 2, 13, 14, 1]
 livem_data = [0, 32, 41, 2, 13, 14, 0]
 
-brightness_norm = [0, 32, 41, 2, 13, 8, 80]
-brightness_idle = [0, 32, 41, 2, 13, 8, 40]
-brightness_audial = [0, 32, 41, 2, 13, 8, 25]
+brightness_norm = [0, 32, 41, 2, 13, 8, 124]
+brightness_idle = [0, 32, 41, 2, 13, 8, 124]
+brightness_audial = [0, 32, 41, 2, 13, 8, 124]
 
 progm = mido.Message('sysex', data=progm_data)
 br = mido.Message('sysex', data=brightness_idle)
@@ -98,8 +98,8 @@ all_classes = []
 all_classes.extend(idle_classes)
 all_classes.extend(audio_classes)
 
-debug_mode = False
-debug_class = "Asteroids"
+debug_mode = True
+debug_class = "SpaceScroller"
 
 
 def get_instance(classname):
@@ -389,41 +389,44 @@ def conf_destroy():
         audio_picks = {debug_class: 1}
     window.withdraw()
 
+if not debug_mode:
+    window = tk.Toplevel(root)
+    window.title("Launchpad Decor Settings")
+    window.grab_set()
+    window.protocol("WM_DELETE_WINDOW", conf_destroy)
+    window.iconbitmap(icon_path)
+    opts = tk.Frame(window, width=320, relief=tk.GROOVE)
+    lis = tk.Listbox(window, selectmode=tk.SINGLE, bg="#ffffff")
+    lis.bind('<<ListboxSelect>>', list_event)
+    enableVal = tk.BooleanVar()
+    enableVal.set(True)
+    enabled = tk.Checkbutton(opts, text="Enabled",
+                            var=enableVal, command=check_event)
 
-window = tk.Toplevel(root)
-window.title("Launchpad Decor Settings")
-window.grab_set()
-window.protocol("WM_DELETE_WINDOW", conf_destroy)
-window.iconbitmap(icon_path)
-opts = tk.Frame(window, width=320, relief=tk.GROOVE)
-lis = tk.Listbox(window, selectmode=tk.SINGLE, bg="#ffffff")
-lis.bind('<<ListboxSelect>>', list_event)
-enableVal = tk.BooleanVar()
-enableVal.set(True)
-enabled = tk.Checkbutton(opts, text="Enabled",
-                         var=enableVal, command=check_event)
-
-description = tk.Label(opts)
-description.pack()
-enabled.pack()
-
-
-for cl in idle_classes:
-    lis.insert(tk.END, cl)
-for cl in audio_classes:
-    lis.insert(tk.END, cl)
-
-lis.activate(0)
-update_pane(0)
-lis.pack(side=tk.LEFT, padx=10, pady=10)
-opts.pack(side=tk.RIGHT, pady=10)
-root.withdraw()
-window.withdraw()
-
-trayMenu = tk.Menu(tearoff=False)
-trayMenu.add_command(label="Settings", command=window.deiconify)
-trayMenu.add_command(label="Quit", command=on_close)
+    description = tk.Label(opts)
+    description.pack()
+    enabled.pack()
 
 
-disp.start()
-root.mainloop()
+    for cl in idle_classes:
+        lis.insert(tk.END, cl)
+    for cl in audio_classes:
+        lis.insert(tk.END, cl)
+
+    lis.activate(0)
+    update_pane(0)
+    lis.pack(side=tk.LEFT, padx=10, pady=10)
+    opts.pack(side=tk.RIGHT, pady=10)
+    root.withdraw()
+    window.withdraw()
+
+    trayMenu = tk.Menu(tearoff=False)
+    trayMenu.add_command(label="Settings", command=window.deiconify)
+    trayMenu.add_command(label="Quit", command=on_close)
+
+
+    disp.start()
+    root.mainloop()
+else:
+    while True:
+        run_display()
