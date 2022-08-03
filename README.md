@@ -2,8 +2,6 @@ Python scripts to draw animations on the Novation Launchpad 9x9, with MIDI messa
 
 It is just a proof of concept.
 
-[Launchpad Programmer's Reference](https://d2xhy469pqj8rc.cloudfront.net/sites/default/files/novation/downloads/10529/launchpad-mk2-programmers-reference-guide-v1-02.pdf)
-
 # Demo
 ![Checkers](/demo/checkers.gif)
 ![Radial Wave](/demo/radial_wave.gif)
